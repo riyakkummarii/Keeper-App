@@ -1,44 +1,56 @@
 import React, { useState } from "react";
+import AddIcon from '@material-ui/icons/Add';
+import Fab from '@material-ui/core/Fab';
+import Zoom from '@material-ui/core/Zoom';
 
 function CreateArea(props) {
-  const [inputText, setInputText] = useState({
+  const [note, setNote] = useState({
     title: "",
     content: ""
   });
 
+  const [isZoom,setZoom]=useState(false);
+
   function handleChange(event) {
     const { name, value } = event.target;
-    setInputText((prevValue) => {
-      return { ...prevValue, [name]: value };
+
+    setNote(prevNote => {
+      return {
+        ...prevNote,
+        [name]: value
+      };
     });
   }
-  //console.log(inputText);
-  function handleClick(event) {
-    props.onAdd(inputText);
-    setInputText({title: "",
-    content: ""});
 
+  function submitNote(event) {
+    props.onAdd(note);
+    setNote({
+      title: "",
+      content: ""
+    });
     event.preventDefault();
+  }
+  function handleZoom(){
+    setZoom(true);
   }
 
   return (
     <div>
-      <form>
-        <input
-          onChange={handleChange}
+      <form className="create-note">
+        {isZoom && <input
           name="title"
-          placeholder="Title"
-          value={inputText.title}
-        />
-        <textarea
           onChange={handleChange}
+          value={note.title}
+          placeholder="Title"
+        />}
+        <textarea onClick={handleZoom}
           name="content"
+          onChange={handleChange}
+          value={note.content}
           placeholder="Take a note..."
-          rows="3"
-          value={inputText.content}
+          rows={isZoom ?"3":"1"}
         />
-        <button onClick={handleClick}>Add</button>
-       
+     <Zoom in={isZoom}><Fab onClick={submitNote}><AddIcon /></Fab></Zoom> 
       </form>
     </div>
   );
